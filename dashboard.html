@@ -15,8 +15,34 @@
         h1::after { content: 'BB'; position: absolute; bottom: -15px; right: -40px; font-size: 0.5em; color: #8a2be2; animation: spinBB 5s infinite linear; }
         .dashboard { display: none; flex-direction: column; gap: 30px; align-items: center; }
         .hamburger { position: fixed; top: 20px; left: 20px; font-size: 2em; color: #ffa500; cursor: pointer; z-index: 1100; }
-        .nav-menu { position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: rgba(10, 14, 27, 0.95); border-right: 3px solid #ffa500; padding: 60px 20px 20px; transition: left 0.3s ease; z-index: 1000; }
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            max-height: 100vh; /* Limits height to viewport */
+            background: rgba(10, 14, 27, 0.95);
+            border-right: 3px solid #ffa500;
+            padding: 60px 20px 20px;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto; /* Enables scrolling when content overflows */
+            box-sizing: border-box; /* Includes padding in height calculation */
+        }
         .nav-menu.active { left: 0; }
+        .nav-menu::-webkit-scrollbar {
+            width: 8px;
+        }
+        .nav-menu::-webkit-scrollbar-track {
+            background: rgba(255, 165, 0, 0.1);
+        }
+        .nav-menu::-webkit-scrollbar-thumb {
+            background: #ffa500;
+            border-radius: 4px;
+        }
+        .nav-menu::-webkit-scrollbar-thumb:hover {
+            background: #8a2be2;
+        }
         .nav-menu ul { list-style: none; }
         .nav-menu li { margin: 20px 0; }
         .nav-menu a { color: #e0e0e0; text-decoration: none; font-size: 1.2em; display: block; padding: 10px; border-radius: 10px; transition: background 0.3s; }
@@ -354,7 +380,7 @@
         function redirectToLogin() {
             if (!isRedirecting) {
                 isRedirecting = true;
-                window.location.href = "index.html";
+                window.location.href = "login.html";
             }
         }
 
