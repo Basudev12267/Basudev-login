@@ -6,13 +6,34 @@
     <meta name="description" content="Login - Learn with Basudev">
     <meta name="author" content="Basudev Bhandari">
     <title>Login - Learn with Basudev</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body style="margin: 0; padding: 20px; box-sizing: border-box; font-family: 'Arial', sans-serif; background: #0a0e1b; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden;">
     <div style="background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 3px solid rgba(255, 165, 0, 0.2); padding: 40px; text-align: center; width: 100%; max-width: 400px;">
         <h1 style="font-size: 2.5em; color: #ffa500; margin-bottom: 20px; animation: glowTitle 2s infinite alternate;">Login</h1>
+        <!-- Email/Password Section -->
         <input type="email" id="email" placeholder="Email" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease;">
         <input type="password" id="password" placeholder="Password" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease;">
+        <div class="g-recaptcha" data-sitekey="6LfSxeAqAAAAAKQE3MarKvAMSgLq3M1UZKY_Kjit" style="margin: 15px auto; display: flex; justify-content: center;"></div>
         <button onclick="login()" style="padding: 12px 30px; border-radius: 25px; background: #ffa500; color: #0a0e1b; border: none; cursor: pointer; font-size: 1.1em; margin: 10px 0; transition: all 0.3s ease;">Log In</button>
+        <!-- Social Login Buttons including Phone -->
+        <button onclick="signInWithGoogle()" style="padding: 12px 30px; border-radius: 25px; background: #ffffff; color: #0a0e1b; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="https://www.google.com/favicon.ico" style="width: 20px; height: 20px;"> Sign in with Google
+        </button>
+        <button onclick="signInWithGithub()" style="padding: 12px 30px; border-radius: 25px; background: #24292e; color: #ffffff; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="https://github.com/favicon.ico" style="width: 20px; height: 20px;"> Sign in with GitHub
+        </button>
+        <button onclick="signInWithX()" style="padding: 12px 30px; border-radius: 25px; background: #000000; color: #ffffff; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="https://abs.twimg.com/favicons/twitter.ico" style="width: 20px; height: 20px;"> Sign in with X
+        </button>
+        <button id="sign-in-button" onclick="showPhoneInput()" style="padding: 12px 30px; border-radius: 25px; background: #4CAF50; color: #ffffff; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="https://www.gstatic.com/firebasejs/ui/4.8.0/images/auth/phone.png" style="width: 20px; height: 20px;"> Sign in with Phone
+        </button>
+        <!-- Phone Input (hidden initially) -->
+        <input type="tel" id="phoneNumber" placeholder="Phone Number (e.g., +12345678901)" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease; display: none;">
+        <button id="sendCodeBtn" onclick="sendPhoneVerification()" style="padding: 12px 30px; border-radius: 25px; background: #ffa500; color: #0a0e1b; border: none; cursor: pointer; font-size: 1.1em; margin: 10px 0; transition: all 0.3s ease; display: none;">Send Code</button>
+        <input type="text" id="verificationCode" placeholder="Enter Verification Code" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease; display: none;">
+        <button id="verifyCodeBtn" onclick="verifyPhoneCode()" style="padding: 12px 30px; border-radius: 25px; background: #ffa500; color: #0a0e1b; border: none; cursor: pointer; font-size: 1.1em; margin: 10px 0; transition: all 0.3s ease; display: none;">Verify Code</button>
         <a href="create-account.html" style="color: #ffa500; text-decoration: none; font-size: 1em; margin-top: 10px; display: inline-block;">Create Account</a>
         <p id="loginError" style="color: red; margin-top: 10px;"></p>
         <p id="verificationMessage" style="color: red; margin-top: 10px;"></p>
@@ -25,7 +46,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup, GithubAuthProvider, TwitterAuthProvider, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBTbh6AcFhQlgXDXeSbwVxjpqv8ylrd54",
@@ -39,37 +60,80 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+        const githubProvider = new GithubAuthProvider();
+        const xProvider = new TwitterAuthProvider();
+
+        // Initialize invisible reCAPTCHA for phone auth
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
+            'size': 'invisible',
+            'callback': (response) => {
+                sendPhoneVerification();
+            },
+            'expired-callback': () => {
+                document.getElementById('loginError').textContent = "reCAPTCHA expired. Please try again.";
+            }
+        });
 
         window.login = function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const recaptchaResponse = grecaptcha.getResponse();
+
             if (!email || !password) {
                 document.getElementById('loginError').textContent = "Email and password are required!";
                 return;
             }
+
+            if (!recaptchaResponse) {
+                document.getElementById('loginError').textContent = "Please complete the reCAPTCHA!";
+                return;
+            }
+
             showLoading();
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log("Logged in:", user.email);
-                    if (user.emailVerified) {
-                        setTimeout(() => {
+            fetch('https://www.google.com/recaptcha/api/siteverify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `secret=6LfSxeAqAAAAAAX-QNxyFZWt_38lKGqqDh71I9Sn&response=${recaptchaResponse}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    signInWithEmailAndPassword(auth, email, password)
+                        .then((userCredential) => {
+                            const user = userCredential.user;
+                            console.log("Logged in:", user.email);
+                            if (user.emailVerified) {
+                                setTimeout(() => {
+                                    hideLoading();
+                                    window.location.href = "dashboard.html";
+                                }, 1000);
+                            } else {
+                                hideLoading();
+                                document.getElementById('loginError').textContent = "Please verify your email address.";
+                                document.getElementById('verificationMessage').innerHTML = `
+                                    Email not verified. <a href="#" onclick="sendVerificationEmail('${user.email}')" style="color: #ffa500; text-decoration: none;">Send verification email</a> again?
+                                `;
+                            }
+                        })
+                        .catch((error) => {
                             hideLoading();
-                            window.location.href = "dashboard.html";
-                        }, 1000);
-                    } else {
-                        hideLoading();
-                        document.getElementById('loginError').textContent = "Please verify your email address.";
-                        document.getElementById('verificationMessage').innerHTML = `
-                            Email not verified. <a href="#" onclick="sendVerificationEmail('${user.email}')" style="color: #ffa500; text-decoration: none;">Send verification email</a> again?
-                        `;
-                    }
-                })
-                .catch((error) => {
+                            document.getElementById('loginError').textContent = error.message;
+                            console.error("Login error:", error.message);
+                        });
+                } else {
                     hideLoading();
-                    document.getElementById('loginError').textContent = error.message;
-                    console.error("Login error:", error.message);
-                });
+                    document.getElementById('loginError').textContent = "reCAPTCHA verification failed. Please try again.";
+                    grecaptcha.reset();
+                }
+            })
+            .catch((error) => {
+                hideLoading();
+                document.getElementById('loginError').textContent = "Error verifying reCAPTCHA. Please try again.";
+                console.error("reCAPTCHA verification error:", error);
+            });
         };
 
         window.sendVerificationEmail = function(email) {
@@ -78,13 +142,136 @@
                 .then(() => {
                     hideLoading();
                     document.getElementById('verificationMessage').style.color = '#ffa500';
-                    document.getElementById('verificationMessage').textContent = `Verification email sent to ${email}. Please check your inbox and verify, then try logging in again.`;
+                    document.getElementById('verificationMessage').textContent = `Verification email sent to ${email}. Please check your inbox and don,t forget to check in spam then try logging ;
                     document.getElementById('loginError').textContent = "";
                 })
                 .catch((error) => {
                     hideLoading();
                     document.getElementById('verificationMessage').textContent = `Error sending verification email: ${error.message}`;
                     console.error("Verification email error:", error.message);
+                });
+        };
+
+        window.showPhoneInput = function() {
+            document.getElementById('phoneNumber').style.display = 'block';
+            document.getElementById('sendCodeBtn').style.display = 'block';
+            document.getElementById('sign-in-button').style.display = 'none';
+            document.getElementById('loginError').textContent = "";
+            document.getElementById('verificationMessage').textContent = "";
+        };
+
+        window.sendPhoneVerification = function() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (!phoneNumber) {
+                document.getElementById('loginError').textContent = "Phone number is required!";
+                return;
+            }
+            if (!phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
+                document.getElementById('loginError').textContent = "Please enter a valid phone number (e.g., +12345678901)";
+                return;
+            }
+
+            showLoading();
+            const appVerifier = window.recaptchaVerifier;
+            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    hideLoading();
+                    document.getElementById('verificationCode').style.display = 'block';
+                    document.getElementById('verifyCodeBtn').style.display = 'block';
+                    document.getElementById('sendCodeBtn').style.display = 'none';
+                    document.getElementById('loginError').textContent = "";
+                    document.getElementById('verificationMessage').style.color = '#ffa500';
+                    document.getElementById('verificationMessage').textContent = "Verification code sent to your phone. Please enter it above.";
+                })
+                .catch((error) => {
+                    hideLoading();
+                    document.getElementById('loginError').textContent = error.message;
+                    console.error("Phone verification error:", error.code, error.message);
+                    window.recaptchaVerifier.render().then(function(widgetId) {
+                        grecaptcha.reset(widgetId);
+                    });
+                    document.getElementById('sign-in-button').style.display = 'block';
+                    document.getElementById('phoneNumber').style.display = 'none';
+                    document.getElementById('sendCodeBtn').style.display = 'none';
+                });
+        };
+
+        window.verifyPhoneCode = function() {
+            const code = document.getElementById('verificationCode').value;
+            if (!code) {
+                document.getElementById('loginError').textContent = "Please enter the verification code!";
+                return;
+            }
+
+            showLoading();
+            window.confirmationResult.confirm(code)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("Phone Sign-In successful:", user.phoneNumber);
+                    setTimeout(() => {
+                        hideLoading();
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                })
+                .catch((error) => {
+                    hideLoading();
+                    document.getElementById('loginError').textContent = "Invalid verification code. Please try again.";
+                    console.error("Phone code verification error:", error.code, error.message);
+                });
+        };
+
+        window.signInWithGoogle = function() {
+            showLoading();
+            signInWithPopup(auth, googleProvider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("Google Sign-In successful:", user.email);
+                    setTimeout(() => {
+                        hideLoading();
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                })
+                .catch((error) => {
+                    hideLoading();
+                    document.getElementById('loginError').textContent = error.message;
+                    console.error("Google Sign-In error:", error.message);
+                });
+        };
+
+        window.signInWithGithub = function() {
+            showLoading();
+            signInWithPopup(auth, githubProvider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("GitHub Sign-In successful:", user.email);
+                    setTimeout(() => {
+                        hideLoading();
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                })
+                .catch((error) => {
+                    hideLoading();
+                    document.getElementById('loginError').textContent = error.message;
+                    console.error("GitHub Sign-In error:", error.message);
+                });
+        };
+
+        window.signInWithX = function() {
+            showLoading();
+            signInWithPopup(auth, xProvider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("X Sign-In successful:", user.email);
+                    setTimeout(() => {
+                        hideLoading();
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                })
+                .catch((error) => {
+                    hideLoading();
+                    document.getElementById('loginError').textContent = error.message;
+                    console.error("X Sign-In error:", error.message);
                 });
         };
 
