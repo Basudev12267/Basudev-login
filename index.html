@@ -7,40 +7,294 @@
     <meta name="author" content="Basudev Bhandari">
     <title>Login - Learn with Basudev</title>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        :root {
+            --primary: #00d1b2; /* Modern teal */
+            --secondary: #ff4081; /* Vibrant pink */
+            --dark: #1e1e2f; /* Deep slate */
+            --glass: rgba(255, 255, 255, 0.1);
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+            --bg-start: #1e1e2f;
+            --bg-end: #3b3b57;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: background 0.5s ease;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        /* Modern Background Animation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 209, 178, 0.15) 0%, transparent 60%);
+            animation: wave 15s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes wave {
+            0% { transform: translate(-10%, -10%) scale(1); opacity: 0.4; }
+            50% { transform: translate(10%, 10%) scale(1.1); opacity: 0.6; }
+            100% { transform: translate(-10%, -10%) scale(1); opacity: 0.4; }
+        }
+
+        .login-container {
+            background: var(--glass);
+            border-radius: 35px;
+            border: 3px solid rgba(0, 209, 178, 0.4);
+            padding: 40px;
+            width: 90%;
+            max-width: 480px;
+            backdrop-filter: blur(15px);
+            box-shadow: var(--shadow);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.5s ease;
+            position: relative;
+            z-index: 1;
+            margin: 80px auto; /* Space for theme button and scrolling */
+        }
+
+        .login-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 209, 178, 0.25);
+            border-color: rgba(0, 209, 178, 0.6);
+        }
+
+        h1 {
+            font-size: clamp(2em, 6vw, 3em); /* Responsive font size */
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(0, 209, 178, 0.6), 0 0 25px var(--secondary);
+            animation: glowTitle 1.2s infinite alternate;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        @keyframes glowTitle {
+            from { text-shadow: 0 0 10px rgba(0, 209, 178, 0.5), 0 0 20px var(--secondary); }
+            to { text-shadow: 0 0 25px rgba(0, 209, 178, 0.9), 0 0 35px var(--secondary); }
+        }
+
+        input, button {
+            padding: clamp(12px, 3vw, 16px); /* Responsive padding */
+            border-radius: 35px;
+            font-size: clamp(1em, 2.5vw, 1.2em); /* Responsive font size */
+            width: 100%;
+            margin: clamp(12px, 2vw, 18px) 0;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input {
+            border: 2px solid var(--primary);
+            background: rgba(30, 30, 47, 0.9);
+            color: #e0e0e0;
+            box-shadow: inset 0 0 6px rgba(0, 209, 178, 0.2);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 12px rgba(255, 64, 129, 0.7);
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(8px, 2vw, 14px); /* Responsive gap */
+            background: linear-gradient(135deg, var(--primary), #00b894);
+            color: var(--dark);
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-100%) skewX(-15deg);
+            transition: transform 0.3s ease;
+        }
+
+        button:hover::after {
+            transform: translateX(100%) skewX(-15deg);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #00e6c3, var(--primary));
+            transform: scale(1.03);
+        }
+
+        .social-button {
+            background: #ffffff;
+            border: 2px solid var(--primary);
+            color: var(--dark);
+        }
+
+        .github-btn { background: #24292e; color: #ffffff; }
+        .x-btn { background: #000000; color: #ffffff; }
+        .phone-btn { background: #4CAF50; color: #ffffff; }
+        .toggle-btn { background: linear-gradient(135deg, #6b7280, #4b5563); color: #ffffff; }
+
+        .more-options-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .more-options-container.show {
+            max-height: clamp(300px, 80vh, 400px); /* Responsive max-height */
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            display: inline-block;
+            margin-top: 20px;
+            transition: color 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        a:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 6px rgba(255, 64, 129, 0.5);
+        }
+
+        #loginError, #verificationMessage {
+            margin-top: 12px;
+            font-size: clamp(0.85em, 2vw, 0.95em);
+            text-align: center;
+        }
+
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 30, 47, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader {
+            width: clamp(60px, 10vw, 80px); /* Responsive size */
+            height: clamp(60px, 10vw, 80px);
+            border: clamp(8px, 1.5vw, 10px) solid var(--primary);
+            border-top: clamp(8px, 1.5vw, 10px) solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #themeToggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: clamp(8px, 1.5vw, 12px) clamp(16px, 2.5vw, 24px); /* Responsive padding */
+            border-radius: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.9em, 2vw, 1em);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        #themeToggle:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            transform: scale(1.1);
+        }
+
+        /* Media Queries for Smaller Devices */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px;
+                margin: 60px 10px;
+            }
+            #themeToggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .login-container {
+                margin: 60px auto;
+            }
+            .more-options-container.show {
+                max-height: 50vh;
+            }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 20px; box-sizing: border-box; font-family: 'Arial', sans-serif; background: #0a0e1b; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden;">
-    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 25px; border: 3px solid rgba(255, 165, 0, 0.2); padding: 40px; text-align: center; width: 100%; max-width: 400px;">
-        <h1 style="font-size: 2.5em; color: #ffa500; margin-bottom: 20px; animation: glowTitle 2s infinite alternate;">Login</h1>
-        <!-- Email/Password Section (reCAPTCHA removed) -->
-        <input type="email" id="email" placeholder="Email" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease;">
-        <input type="password" id="password" placeholder="Password" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease;">
-        <button onclick="login()" style="padding: 12px 30px; border-radius: 25px; background: #ffa500; color: #0a0e1b; border: none; cursor: pointer; font-size: 1.1em; margin: 10px 0; transition: all 0.3s ease;">Log In</button>
-        <!-- Social Login Buttons including Phone -->
-        <button onclick="signInWithGoogle()" style="padding: 12px 30px; border-radius: 25px; background: #ffffff; color: #0a0e1b; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <img src="https://www.google.com/favicon.ico" style="width: 20px; height: 20px;"> Sign in with Google
+<body>
+    <button id="themeToggle" onclick="toggleTheme()">Change Theme</button>
+    <div class="login-container">
+        <h1>Login</h1>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Log In</button>
+        
+        <button class="social-button" onclick="signInWithGoogle()">
+            <img src="https://www.google.com/favicon.ico" style="width: clamp(18px, 3vw, 22px); height: clamp(18px, 3vw, 22px);"> Sign in with Google
         </button>
-        <button onclick="signInWithGithub()" style="padding: 12px 30px; border-radius: 25px; background: #24292e; color: #ffffff; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <img src="https://github.com/favicon.ico" style="width: 20px; height: 20px;"> Sign in with GitHub
-        </button>
-        <button onclick="signInWithX()" style="padding: 12px 30px; border-radius: 25px; background: #000000; color: #ffffff; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <img src="https://abs.twimg.com/favicons/twitter.ico" style="width: 20px; height: 20px;"> Sign in with X
-        </button>
-        <button id="sign-in-button" onclick="showPhoneInput()" style="padding: 12px 30px; border-radius: 25px; background: #4CAF50; color: #ffffff; border: 2px solid #ffa500; cursor: pointer; font-size: 1.1em; margin: 10px 0; width: 100%; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <img src="phone.webp" style="width: 20px; height: 20px;"> Sign in with Phone
-        </button>
-        <!-- Phone Input (hidden initially) -->
-        <input type="tel" id="phoneNumber" placeholder="Phone Number (e.g., +12345678901)" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease; display: none;">
-        <button id="sendCodeBtn" onclick="sendPhoneVerification()" style="padding: 12px 30px; border-radius: 25px; background: #ffa500; color: #0a0e1b; border: none; cursor: pointer; font-size: 1.1em; margin: 10px 0; transition: all 0.3s ease; display: none;">Send Code</button>
-        <input type="text" id="verificationCode" placeholder="Enter Verification Code" style="padding: 12px; border-radius: 25px; border: 2px solid #ffa500; background: rgba(10, 14, 27, 0.9); color: #e0e0e0; font-size: 1.1em; width: 100%; margin: 10px 0; transition: all 0.3s ease; display: none;">
-        <button id="verifyCodeBtn" onclick="verifyPhoneCode()" style="padding: 12px 30px; border-radius: 25px; background: #ffa500; color: #0a0e1b; border: none; cursor: pointer; font-size: 1.1em; margin: 10px 0; transition: all 0.3s ease; display: none;">Verify Code</button>
-        <a href="create-account.html" style="color: #ffa500; text-decoration: none; font-size: 1em; margin-top: 10px; display: inline-block;">Create Account</a>
-        <p id="loginError" style="color: red; margin-top: 10px;"></p>
-        <p id="verificationMessage" style="color: red; margin-top: 10px;"></p>
+        
+        <button id="toggleOptionsBtn" class="toggle-btn" onclick="toggleMoreOptions()">More Options</button>
+        
+        <div id="moreOptions" class="more-options-container">
+            <button class="social-button github-btn" onclick="signInWithGithub()">
+                <img src="https://github.com/favicon.ico" style="width: clamp(18px, 3vw, 22px); height: clamp(18px, 3vw, 22px);"> Sign in with GitHub
+            </button>
+            <button class="social-button x-btn" onclick="signInWithX()">
+                <img src="https://abs.twimg.com/favicons/twitter.ico" style="width: clamp(18px, 3vw, 22px); height: clamp(18px, 3vw, 22px);"> Sign in with X
+            </button>
+            <button id="sign-in-button" class="social-button phone-btn" onclick="showPhoneInput()">
+                <img src="phone.webp" style="width: clamp(18px, 3vw, 22px); height: clamp(18px, 3vw, 22px);"> Sign in with Phone
+            </button>
+            <input type="tel" id="phoneNumber" placeholder="Phone Number (e.g., +12345678901)" style="display: none;">
+            <button id="sendCodeBtn" onclick="sendPhoneVerification()" style="display: none;">Send Code</button>
+            <input type="text" id="verificationCode" placeholder="Enter Verification Code" style="display: none;">
+            <button id="verifyCodeBtn" onclick="verifyPhoneCode()" style="display: none;">Verify Code</button>
+        </div>
+        
+        <a href="create-account.html">Create Account</a>
+        <p id="loginError" style="color: red;"></p>
+        <p id="verificationMessage" style="color: red;"></p>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 14, 27, 0.9); justify-content: center; align-items: center; z-index: 1000;">
-        <div style="width: 60px; height: 60px; border: 6px solid #ffa500; border-top: 6px solid #8a2be2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div id="loadingOverlay">
+        <div class="loader"></div>
     </div>
 
     <script type="module">
@@ -63,110 +317,100 @@
         const githubProvider = new GithubAuthProvider();
         const xProvider = new TwitterAuthProvider();
 
-        // Initialize invisible reCAPTCHA for phone auth
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
             'size': 'invisible',
-            'callback': (response) => {
-                sendPhoneVerification();
-            },
-            'expired-callback': () => {
-                document.getElementById('loginError').textContent = "reCAPTCHA expired. Please try again.";
-            }
+            'callback': (response) => { sendPhoneVerification(); },
+            'expired-callback': () => { document.getElementById('loginError').textContent = "reCAPTCHA expired. Please try again."; }
         });
+
+        let isDarkTheme = true;
+
+        window.toggleTheme = function() {
+            if (isDarkTheme) {
+                document.documentElement.style.setProperty('--primary', '#ff6f61'); /* Coral */
+                document.documentElement.style.setProperty('--secondary', '#40c4ff'); /* Light blue */
+                document.documentElement.style.setProperty('--dark', '#fafafa'); /* Off-white */
+                document.documentElement.style.setProperty('--glass', 'rgba(0, 0, 0, 0.1)');
+                document.documentElement.style.setProperty('--bg-start', '#e0e0e0');
+                document.documentElement.style.setProperty('--bg-end', '#b0bec5');
+                document.body.style.color = '#1e1e2f';
+            } else {
+                document.documentElement.style.setProperty('--primary', '#00d1b2');
+                document.documentElement.style.setProperty('--secondary', '#ff4081');
+                document.documentElement.style.setProperty('--dark', '#1e1e2f');
+                document.documentElement.style.setProperty('--glass', 'rgba(255, 255, 255, 0.1)');
+                document.documentElement.style.setProperty('--bg-start', '#1e1e2f');
+                document.documentElement.style.setProperty('--bg-end', '#3b3b57');
+                document.body.style.color = '#e0e0e0';
+            }
+            isDarkTheme = !isDarkTheme;
+        };
 
         window.login = function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
             if (!email || !password) {
                 document.getElementById('loginError').textContent = "Email and password are required!";
                 return;
             }
-
             showLoading();
             signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log("Logged in:", user.email);
-                    if (user.emailVerified) {
-                        setTimeout(() => {
-                            hideLoading();
-                            window.location.href = "dashboard.html";
-                        }, 1000);
-                    } else {
-                        hideLoading();
-                        document.getElementById('loginError').textContent = "Please verify your email address.";
-                        document.getElementById('verificationMessage').innerHTML = `
-                            Email not verified. <a href="#" onclick="sendVerificationEmail('${user.email}')" style="color: #ffa500; text-decoration: none;">Send verification email</a> again?
-                        `;
-                    }
-                })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('loginError').textContent = error.message;
-                    console.error("Login error:", error.message);
-                });
+                .then((userCredential) => handleSignInSuccess(userCredential.user))
+                .catch((error) => handleSignInError(error));
         };
 
-        window.sendVerificationEmail = function(email) {
+        window.signInWithGoogle = function() {
             showLoading();
-            sendEmailVerification(auth.currentUser)
-                .then(() => {
-                    hideLoading();
-                    document.getElementById('verificationMessage').style.color = '#ffa500';
-                    document.getElementById('verificationMessage').textContent = `Verification email sent to ${email}. Please check your inbox and verify, then try logging in again.`;
-                    document.getElementById('loginError').textContent = "";
-                })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('verificationMessage').textContent = `Error sending verification email: ${error.message}`;
-                    console.error("Verification email error:", error.message);
-                });
+            signInWithPopup(auth, googleProvider)
+                .then((result) => handleSignInSuccess(result.user))
+                .catch((error) => handleSignInError(error));
+        };
+
+        window.signInWithGithub = function() {
+            showLoading();
+            signInWithPopup(auth, githubProvider)
+                .then((result) => handleSignInSuccess(result.user))
+                .catch((error) => handleSignInError(error));
+        };
+
+        window.signInWithX = function() {
+            showLoading();
+            signInWithPopup(auth, xProvider)
+                .then((result) => handleSignInSuccess(result.user))
+                .catch((error) => handleSignInError(error));
+        };
+
+        window.toggleMoreOptions = function() {
+            const moreOptions = document.getElementById('moreOptions');
+            const toggleBtn = document.getElementById('toggleOptionsBtn');
+            moreOptions.classList.toggle('show');
+            toggleBtn.textContent = moreOptions.classList.contains('show') ? 'Less Options' : 'More Options';
         };
 
         window.showPhoneInput = function() {
             document.getElementById('phoneNumber').style.display = 'block';
             document.getElementById('sendCodeBtn').style.display = 'block';
             document.getElementById('sign-in-button').style.display = 'none';
-            document.getElementById('loginError').textContent = "";
-            document.getElementById('verificationMessage').textContent = "";
         };
 
         window.sendPhoneVerification = function() {
             const phoneNumber = document.getElementById('phoneNumber').value;
-            if (!phoneNumber) {
-                document.getElementById('loginError').textContent = "Phone number is required!";
-                return;
-            }
-            if (!phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
+            if (!phoneNumber || !phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
                 document.getElementById('loginError').textContent = "Please enter a valid phone number (e.g., +12345678901)";
                 return;
             }
-
             showLoading();
-            const appVerifier = window.recaptchaVerifier;
-            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+            signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
                     hideLoading();
                     document.getElementById('verificationCode').style.display = 'block';
                     document.getElementById('verifyCodeBtn').style.display = 'block';
                     document.getElementById('sendCodeBtn').style.display = 'none';
-                    document.getElementById('loginError').textContent = "";
-                    document.getElementById('verificationMessage').style.color = '#ffa500';
-                    document.getElementById('verificationMessage').textContent = "Verification code sent to your phone. Please enter it above.";
+                    document.getElementById('verificationMessage').style.color = '#00d1b2';
+                    document.getElementById('verificationMessage').textContent = "Verification code sent to your phone.";
                 })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('loginError').textContent = error.message;
-                    console.error("Phone verification error:", error.code, error.message);
-                    window.recaptchaVerifier.render().then(function(widgetId) {
-                        grecaptcha.reset(widgetId);
-                    });
-                    document.getElementById('sign-in-button').style.display = 'block';
-                    document.getElementById('phoneNumber').style.display = 'none';
-                    document.getElementById('sendCodeBtn').style.display = 'none';
-                });
+                .catch((error) => handleSignInError(error));
         };
 
         window.verifyPhoneCode = function() {
@@ -175,85 +419,50 @@
                 document.getElementById('loginError').textContent = "Please enter the verification code!";
                 return;
             }
-
             showLoading();
             window.confirmationResult.confirm(code)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("Phone Sign-In successful:", user.phoneNumber);
-                    setTimeout(() => {
-                        hideLoading();
-                        window.location.href = "dashboard.html";
-                    }, 1000);
-                })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('loginError').textContent = "Invalid verification code. Please try again.";
-                    console.error("Phone code verification error:", error.code, error.message);
-                });
+                .then((result) => handleSignInSuccess(result.user))
+                .catch((error) => handleSignInError(error));
         };
 
-        window.signInWithGoogle = function() {
-            showLoading();
-            signInWithPopup(auth, googleProvider)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("Google Sign-In successful:", user.email);
-                    setTimeout(() => {
-                        hideLoading();
-                        window.location.href = "dashboard.html";
-                    }, 1000);
-                })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('loginError').textContent = error.message;
-                    console.error("Google Sign-In error:", error.message);
-                });
-        };
-
-        window.signInWithGithub = function() {
-            showLoading();
-            signInWithPopup(auth, githubProvider)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("GitHub Sign-In successful:", user.email);
-                    setTimeout(() => {
-                        hideLoading();
-                        window.location.href = "dashboard.html";
-                    }, 1000);
-                })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('loginError').textContent = error.message;
-                    console.error("GitHub Sign-In error:", error.message);
-                });
-        };
-
-        window.signInWithX = function() {
-            showLoading();
-            signInWithPopup(auth, xProvider)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("X Sign-In successful:", user.email);
-                    setTimeout(() => {
-                        hideLoading();
-                        window.location.href = "dashboard.html";
-                    }, 1000);
-                })
-                .catch((error) => {
-                    hideLoading();
-                    document.getElementById('loginError').textContent = error.message;
-                    console.error("X Sign-In error:", error.message);
-                });
-        };
-
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
+        function handleSignInSuccess(user) {
+            console.log("Sign-In successful:", user.email || user.phoneNumber);
+            if (user.email && !user.emailVerified) {
+                hideLoading();
+                document.getElementById('loginError').textContent = "Please verify your email address.";
+                document.getElementById('verificationMessage').innerHTML = `
+                    Email not verified. <a href="#" onclick="sendVerificationEmail('${user.email}')" style="color: #00d1b2;">Send verification email</a> again?
+                `;
+                return;
+            }
+            setTimeout(() => {
+                hideLoading();
+                window.location.href = "dashboard.html";
+            }, 1000);
         }
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
+        window.sendVerificationEmail = function(email) {
+            showLoading();
+            sendEmailVerification(auth.currentUser)
+                .then(() => {
+                    hideLoading();
+                    document.getElementById('verificationMessage').style.color = '#00d1b2';
+                    document.getElementById('verificationMessage').textContent = `Verification email sent to ${email}.`;
+                })
+                .catch((error) => handleSignInError(error));
+        };
+
+        function handleSignInError(error) {
+            hideLoading();
+            document.getElementById('loginError').textContent = error.message;
+            console.error("Sign-In error:", error.message);
+            if (error.code === 'auth/popup-closed-by-user') {
+                document.getElementById('loginError').textContent = "Sign-in cancelled. Please try again.";
+            }
         }
+
+        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
     </script>
 </body>
 </html>
