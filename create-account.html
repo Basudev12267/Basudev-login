@@ -7,82 +7,166 @@
     <meta name="author" content="Basudev Bhandari">
     <title>Create Account - Learn with Basudev</title>
     <style>
+        :root {
+            --primary: #00d1b2; /* Modern teal */
+            --secondary: #ff4081; /* Vibrant pink */
+            --dark: #1e1e2f; /* Deep slate */
+            --glass: rgba(255, 255, 255, 0.1);
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+            --bg-start: #1e1e2f;
+            --bg-end: #3b3b57;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Arial', sans-serif;
-            background: #0a0e1b;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
             color: #e0e0e0;
             padding: 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
+            position: relative;
+            transition: background 0.5s ease;
+            overflow-y: auto; /* Enable vertical scrolling */
         }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 209, 178, 0.15) 0%, transparent 60%);
+            animation: wave 15s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes wave {
+            0% { transform: translate(-10%, -10%) scale(1); opacity: 0.4; }
+            50% { transform: translate(10%, 10%) scale(1.1); opacity: 0.6; }
+            100% { transform: translate(-10%, -10%) scale(1); opacity: 0.4; }
+        }
+
         .container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 25px;
-            border: 3px solid rgba(255, 165, 0, 0.2);
+            background: var(--glass);
+            border-radius: 35px;
+            border: 3px solid rgba(0, 209, 178, 0.4);
             padding: 40px;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
+            width: 90%;
+            max-width: 480px;
+            backdrop-filter: blur(15px);
+            box-shadow: var(--shadow);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.5s ease;
+            position: relative;
+            z-index: 1;
+            margin: 80px auto; /* Space for theme button and scrolling */
         }
+
+        .container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 209, 178, 0.25);
+            border-color: rgba(0, 209, 178, 0.6);
+        }
+
         h1 {
-            font-size: 2.5em;
-            color: #ffa500;
-            margin-bottom: 20px;
-            animation: glowTitle 2s infinite alternate;
+            font-size: clamp(2em, 6vw, 3em);
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(0, 209, 178, 0.6), 0 0 25px var(--secondary);
+            animation: glowTitle 1.2s infinite alternate;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
         }
-        input {
-            padding: 12px;
-            border-radius: 25px;
-            border: 2px solid #ffa500;
-            background: rgba(10, 14, 27, 0.9);
-            color: #e0e0e0;
-            font-size: 1.1em;
+
+        @keyframes glowTitle {
+            from { text-shadow: 0 0 10px rgba(0, 209, 178, 0.5), 0 0 20px var(--secondary); }
+            to { text-shadow: 0 0 25px rgba(0, 209, 178, 0.9), 0 0 35px var(--secondary); }
+        }
+
+        input, button {
+            padding: clamp(12px, 3vw, 16px);
+            border-radius: 35px;
+            font-size: clamp(1em, 2.5vw, 1.2em);
             width: 100%;
-            margin: 10px 0;
+            margin: clamp(12px, 2vw, 18px) 0;
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
+
+        input {
+            border: 2px solid var(--primary);
+            background: rgba(30, 30, 47, 0.9);
+            color: #e0e0e0;
+            box-shadow: inset 0 0 6px rgba(0, 209, 178, 0.2);
+        }
+
         input:focus {
             outline: none;
-            border-color: #8a2be2;
+            border-color: var(--secondary);
+            box-shadow: 0 0 12px rgba(255, 64, 129, 0.7);
         }
+
         button {
-            padding: 12px 30px;
-            border-radius: 25px;
-            background: #ffa500;
-            color: #0a0e1b;
             border: none;
             cursor: pointer;
-            font-size: 1.1em;
-            margin: 10px 0;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--primary), #00b894);
+            color: var(--dark);
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
         }
+
+        button::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-100%) skewX(-15deg);
+            transition: transform 0.3s ease;
+        }
+
+        button:hover::after {
+            transform: translateX(100%) skewX(-15deg);
+        }
+
         button:hover {
-            background: #8a2be2;
-            color: #fff;
-            transform: scale(1.05);
+            background: linear-gradient(135deg, #00e6c3, var(--primary));
+            transform: scale(1.03);
         }
+
         a {
-            color: #ffa500;
+            color: var(--primary);
             text-decoration: none;
-            font-size: 1em;
-            margin-top: 10px;
+            font-size: clamp(0.9em, 2vw, 1.1em);
             display: inline-block;
+            margin-top: 20px;
+            transition: color 0.3s ease;
+            text-align: center;
+            width: 100%;
         }
+
         a:hover {
-            color: #8a2be2;
+            color: var(--secondary);
+            text-shadow: 0 0 6px rgba(255, 64, 129, 0.5);
         }
+
         #createError {
+            margin-top: 12px;
+            font-size: clamp(0.85em, 2vw, 0.95em);
             color: red;
-            margin-top: 10px;
+            text-align: center;
         }
+
         .loading-overlay {
             display: none;
             position: fixed;
@@ -90,30 +174,68 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 14, 27, 0.9);
+            background: rgba(30, 30, 47, 0.9);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
+
         .loading-circle {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #ffa500;
-            border-top: 6px solid #8a2be2;
+            width: clamp(60px, 10vw, 80px);
+            height: clamp(60px, 10vw, 80px);
+            border: clamp(8px, 1.5vw, 10px) solid var(--primary);
+            border-top: clamp(8px, 1.5vw, 10px) solid var(--secondary);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1s ease-in-out infinite;
         }
-        @keyframes glowTitle {
-            0% { text-shadow: 0 0 10px #ffa500; }
-            100% { text-shadow: 0 0 20px #ffa500, 0 0 40px #8a2be2; }
-        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        #themeToggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: clamp(8px, 1.5vw, 12px) clamp(16px, 2.5vw, 24px);
+            border-radius: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.9em, 2vw, 1em);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        #themeToggle:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            transform: scale(1.1);
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px;
+                margin: 60px 10px;
+            }
+            #themeToggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .container {
+                margin: 60px auto;
+            }
+        }
     </style>
 </head>
 <body>
+    <button id="themeToggle" onclick="toggleTheme()">Change Theme</button>
     <div class="container">
         <h1>Create Account</h1>
         <input type="email" id="createEmail" placeholder="Email">
@@ -125,7 +247,6 @@
         <p id="createError"></p>
     </div>
 
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-circle"></div>
     </div>
@@ -149,6 +270,29 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const defaultAvatar = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAdElEQVR42u3Q0QnAIAwF0G/AO7iDCxgQ64G7QkJkJAmCkN/fX3IBAAAAnHNg+wAAAACAMw5s/QAAAAAAgDMObP0AAAAAAIAzDmz9AAAAAACAMw5s/QAAAAAAgDMObP0AAAAAAIAzDmz9AAAAAACAMw5s/QAAAAAAgL8dFrpJHHv5nS8AAAAASUVORK5CYII=";
+
+        let isDarkTheme = true;
+
+        window.toggleTheme = function() {
+            if (isDarkTheme) {
+                document.documentElement.style.setProperty('--primary', '#ff6f61'); /* Coral */
+                document.documentElement.style.setProperty('--secondary', '#40c4ff'); /* Light blue */
+                document.documentElement.style.setProperty('--dark', '#fafafa'); /* Off-white */
+                document.documentElement.style.setProperty('--glass', 'rgba(0, 0, 0, 0.1)');
+                document.documentElement.style.setProperty('--bg-start', '#e0e0e0');
+                document.documentElement.style.setProperty('--bg-end', '#b0bec5');
+                document.body.style.color = '#1e1e2f';
+            } else {
+                document.documentElement.style.setProperty('--primary', '#00d1b2');
+                document.documentElement.style.setProperty('--secondary', '#ff4081');
+                document.documentElement.style.setProperty('--dark', '#1e1e2f');
+                document.documentElement.style.setProperty('--glass', 'rgba(255, 255, 255, 0.1)');
+                document.documentElement.style.setProperty('--bg-start', '#1e1e2f');
+                document.documentElement.style.setProperty('--bg-end', '#3b3b57');
+                document.body.style.color = '#e0e0e0';
+            }
+            isDarkTheme = !isDarkTheme;
+        };
 
         window.createAccount = function() {
             const email = document.getElementById('createEmail').value;
