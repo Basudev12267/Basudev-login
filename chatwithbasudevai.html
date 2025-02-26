@@ -14,6 +14,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Orbitron', sans-serif;
+            user-select: none; /* Prevent text selection */
         }
 
         body {
@@ -53,7 +54,7 @@
             animation: fadeInScale 0.8s ease-out;
             backdrop-filter: blur(15px);
             border: 1px solid rgba(65, 255, 255, 0.3);
-            height: calc(100vh - 40px); /* Full height minus padding */
+            height: calc(100vh - 40px);
         }
 
         .chat-header {
@@ -63,20 +64,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid rgba(65, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
             flex-shrink: 0;
-        }
-
-        .chat-header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(65, 255, 255, 0.2), transparent);
-            animation: shimmer 3s infinite;
         }
 
         .chat-header h1 {
@@ -96,11 +84,10 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 12px;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 5px 20px rgba(65, 255, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 1px;
-            flex-shrink: 0;
         }
 
         .new-chat-btn:hover {
@@ -115,8 +102,7 @@
             background: rgba(20, 30, 50, 0.7);
             backdrop-filter: blur(10px);
             scroll-behavior: smooth;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
+            will-change: scroll-position; /* Optimize scrolling */
         }
 
         .welcome-message {
@@ -125,7 +111,8 @@
             color: #d4f1f4;
             font-weight: 300;
             font-family: 'Roboto Mono', monospace;
-            animation: fadeInUp 1.2s ease;
+            opacity: 0;
+            animation: fadeInUp 1.2s ease forwards;
             text-shadow: 0 0 15px rgba(65, 255, 255, 0.3);
         }
 
@@ -142,7 +129,8 @@
             margin-bottom: 20px;
             display: flex;
             align-items: flex-start;
-            animation: slideIn 0.4s ease;
+            opacity: 0;
+            animation: slideIn 0.4s ease forwards;
         }
 
         .message.user {
@@ -158,19 +146,6 @@
             font-size: 14px;
             line-height: 1.6;
             font-family: 'Roboto Mono', monospace;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .message-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(65, 255, 255, 0.1), transparent);
-            animation: shimmer 4s infinite;
         }
 
         .message.user .message-content {
@@ -201,8 +176,8 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            position: relative;
             flex-shrink: 0;
+            position: relative;
         }
 
         .chat-footer::after {
@@ -226,7 +201,7 @@
             outline: none;
             font-size: 14px;
             box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.3), 0 0 10px rgba(65, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .chat-input:focus {
@@ -247,11 +222,10 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 12px;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 5px 20px rgba(65, 255, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 1px;
-            flex-shrink: 0;
         }
 
         .send-btn:hover {
@@ -269,8 +243,8 @@
             animation: slideInLeft 0.8s ease;
             backdrop-filter: blur(15px);
             border: 1px solid rgba(65, 255, 255, 0.3);
-            max-height: 200px; /* Fixed height for recent chats */
-            flex-shrink: 0; /* Prevents shrinking */
+            max-height: 200px;
+            flex-shrink: 0;
         }
 
         .recent-chats h2 {
@@ -338,80 +312,49 @@
             100% { transform: scale(1); opacity: 0.5; }
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
         @media (max-width: 768px) {
-            body {
-                padding: 0; /* No padding for full screen */
-            }
-            .chat-container {
-                max-width: 100%;
-                height: 100vh; /* Full screen height */
-                border-radius: 0; /* No border radius for full screen */
-                margin: 0;
-            }
-            .chat-header {
-                padding: 10px 15px;
-            }
-            .chat-header h1 {
-                font-size: 20px;
-            }
-            .new-chat-btn {
-                padding: 8px 15px;
-                font-size: 11px;
-            }
-            .chat-body {
-                padding: 15px;
-            }
-            .welcome-message {
-                font-size: 18px;
-            }
-            .welcome-message span {
-                font-size: 24px;
-            }
-            .message-content {
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-            .chat-footer {
-                padding: 15px;
-                gap: 10px;
-            }
-            .chat-input {
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-            .send-btn {
-                padding: 10px 20px;
-                font-size: 11px;
-            }
-            .recent-chats {
-                max-height: 150px; /* Slightly smaller for mobile */
-                border-radius: 0 0 20px 20px; /* Rounded only at bottom */
-            }
-            .recent-chats h2 {
-                font-size: 16px;
-            }
-            .recent-chat-item {
-                padding: 10px 12px;
-                font-size: 12px;
-            }
+            body { padding: 0; }
+            .chat-container { max-width: 100%; height: 100vh; border-radius: 0; margin: 0; }
+            .chat-header { padding: 10px 15px; }
+            .chat-header h1 { font-size: 20px; }
+            .new-chat-btn { padding: 8px 15px; font-size: 11px; }
+            .chat-body { padding: 15px; }
+            .welcome-message { font-size: 18px; }
+            .welcome-message span { font-size: 24px; }
+            .message-content { padding: 10px 15px; font-size: 13px; }
+            .chat-footer { padding: 15px; gap: 10px; }
+            .chat-input { padding: 10px 15px; font-size: 13px; }
+            .send-btn { padding: 10px 20px; font-size: 11px; }
+            .recent-chats { max-height: 150px; border-radius: 0 0 20px 20px; }
+            .recent-chats h2 { font-size: 16px; }
+            .recent-chat-item { padding: 10px 12px; font-size: 12px; }
         }
     </style>
     <script>
-(function() {
-    function detectDevTools() {
-        if (window.outerHeight - window.innerHeight > 200) {
-            alert("Developer tools detected! Please close it.");
-        }
-    }
-    setInterval(detectDevTools, 2000);
-})();
-</script>
+        // Prevent right-click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
 
+        // Prevent common developer shortcuts (F12, Ctrl+Shift+I, Ctrl+U)
+        document.addEventListener('keydown', (e) => {
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u')
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        // Detect dev tools
+        (function() {
+            function detectDevTools() {
+                if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+                    document.body.innerHTML = '<h1>Please close developer tools to continue.</h1>';
+                }
+            }
+            setInterval(detectDevTools, 2000);
+        })();
+    </script>
 </head>
 <body>
     <div class="chat-container">
@@ -454,12 +397,25 @@
         const API_KEY = "AIzaSyDZ_AcbX_wMdpHjfnluCgg6jHJT_2MhAWI";
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-        // Functions
-        function updateRecentChats() {
-            recentChats.innerHTML = '<h2>Recent Chats</h2>' + 
-                state.recentPrompts.map(prompt => 
-                    `<div class="recent-chat-item" onclick="loadChat('${prompt}')">${prompt.substring(0, 30)}${prompt.length > 30 ? '...' : ''}</div>`
+        // Virtual DOM-like approach
+        let virtualChatBody = [];
+
+        function renderChatBody() {
+            requestAnimationFrame(() => {
+                chatBody.innerHTML = virtualChatBody.map(msg => 
+                    `<div class="message${msg.isUser ? ' user' : ''}"><div class="message-content">${msg.content}</div></div>`
                 ).join('');
+                chatBody.scrollTop = chatBody.scrollHeight;
+            });
+        }
+
+        function updateRecentChats() {
+            requestAnimationFrame(() => {
+                recentChats.innerHTML = '<h2>Recent Chats</h2>' + 
+                    state.recentPrompts.map(prompt => 
+                        `<div class="recent-chat-item" onclick="loadChat('${prompt}')">${prompt.substring(0, 30)}${prompt.length > 30 ? '...' : ''}</div>`
+                    ).join('');
+            });
         }
 
         async function sendMessage(prompt) {
@@ -470,13 +426,13 @@
             welcomeMessage.style.display = 'none';
 
             // Add user message
-            const userMessage = `<div class="message user"><div class="message-content">${prompt}</div></div>`;
-            chatBody.innerHTML += userMessage;
-            chatBody.scrollTop = chatBody.scrollHeight;
+            virtualChatBody.push({ content: prompt, isUser: true });
+            renderChatBody();
 
             // Add loader
-            const loader = `<div class="message" id="loader"><div class="loader"><div></div><div></div><div></div></div></div>`;
-            chatBody.innerHTML += loader;
+            const loaderId = Date.now(); // Unique ID for loader
+            virtualChatBody.push({ content: `<div class="loader"><div></div><div></div><div></div></div>`, isUser: false, id: loaderId });
+            renderChatBody();
 
             try {
                 const response = await fetch(API_URL, {
@@ -491,12 +447,9 @@
                 const aiResponse = data.candidates[0].content.parts[0].text;
 
                 // Remove loader
-                document.getElementById('loader').remove();
-
-                // Add AI response
-                const aiMessage = `<div class="message"><div class="message-content">${aiResponse}</div></div>`;
-                chatBody.innerHTML += aiMessage;
-                chatBody.scrollTop = chatBody.scrollHeight;
+                virtualChatBody = virtualChatBody.filter(msg => msg.id !== loaderId);
+                virtualChatBody.push({ content: aiResponse, isUser: false });
+                renderChatBody();
 
                 // Update recent prompts
                 state.recentPrompts = [...new Set([prompt, ...state.recentPrompts])].slice(0, 10);
@@ -504,9 +457,9 @@
                 updateRecentChats();
             } catch (error) {
                 console.error('API Error:', error);
-                document.getElementById('loader').remove();
-                chatBody.innerHTML += `<div class="message"><div class="message-content">Error: Could not get response. Please try again.</div></div>`;
-                chatBody.scrollTop = chatBody.scrollHeight;
+                virtualChatBody = virtualChatBody.filter(msg => msg.id !== loaderId);
+                virtualChatBody.push({ content: 'Error: Could not get response. Please try again.', isUser: false });
+                renderChatBody();
             }
 
             state.isLoading = false;
@@ -515,6 +468,7 @@
         function newChat() {
             state.messages = [];
             state.isLoading = false;
+            virtualChatBody = [];
             chatBody.innerHTML = '';
             welcomeMessage.style.display = 'block';
             chatInput.value = '';
