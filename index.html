@@ -9,9 +9,9 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         :root {
-            --primary: #00d1b2; /* Modern teal */
-            --secondary: #ff4081; /* Vibrant pink */
-            --dark: #1e1e2f; /* Deep slate */
+            --primary: #00d1b2;
+            --secondary: #ff4081;
+            --dark: #1e1e2f;
             --glass: rgba(255, 255, 255, 0.1);
             --shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
             --bg-start: #1e1e2f;
@@ -30,10 +30,10 @@
             align-items: center;
             position: relative;
             transition: background 0.5s ease;
-            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-y: auto;
+            user-select: none; /* Prevent text selection */
         }
 
-        /* Modern Background Animation */
         body::before {
             content: '';
             position: absolute;
@@ -64,7 +64,7 @@
             transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.5s ease;
             position: relative;
             z-index: 1;
-            margin: 80px auto; /* Space for theme button and scrolling */
+            margin: 80px auto;
         }
 
         .login-container:hover {
@@ -74,28 +74,28 @@
         }
 
         h1 {
-            font-size: clamp(2em, 6vw, 3em); /* Responsive font size */
+            font-size: clamp(2em, 6vw, 3em);
             color: var(--primary);
             margin-bottom: 30px;
-            text-shadow: 0 0 15px rgba(0, 209, 178, 0.6), 0 0 25px var(--secondary);
-            animation: glowTitle 1.2s infinite alternate;
+            text-shadow: 0 0 15px rgba(0, 209, 178, 0.6);
             font-weight: bold;
             letter-spacing: 1px;
             text-align: center;
+            animation: glowTitle 1.2s infinite alternate;
         }
 
         @keyframes glowTitle {
-            from { text-shadow: 0 0 10px rgba(0, 209, 178, 0.5), 0 0 20px var(--secondary); }
-            to { text-shadow: 0 0 25px rgba(0, 209, 178, 0.9), 0 0 35px var(--secondary); }
+            from { text-shadow: 0 0 10px rgba(0, 209, 178, 0.5); }
+            to { text-shadow: 0 0 20px rgba(0, 209, 178, 0.7); }
         }
 
         input, button {
-            padding: clamp(12px, 3vw, 16px); /* Responsive padding */
+            padding: clamp(12px, 3vw, 16px);
             border-radius: 35px;
-            font-size: clamp(1em, 2.5vw, 1.2em); /* Responsive font size */
+            font-size: clamp(1em, 2.5vw, 1.2em);
             width: 100%;
             margin: clamp(12px, 2vw, 18px) 0;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             box-sizing: border-box;
         }
 
@@ -118,26 +118,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: clamp(8px, 2vw, 14px); /* Responsive gap */
+            gap: clamp(8px, 2vw, 14px);
             background: linear-gradient(135deg, var(--primary), #00b894);
             color: var(--dark);
             font-weight: bold;
             position: relative;
             overflow: hidden;
-        }
-
-        button::after {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateX(-100%) skewX(-15deg);
-            transition: transform 0.3s ease;
-        }
-
-        button:hover::after {
-            transform: translateX(100%) skewX(-15deg);
         }
 
         button:hover {
@@ -163,7 +149,7 @@
         }
 
         .more-options-container.show {
-            max-height: clamp(300px, 80vh, 400px); /* Responsive max-height */
+            max-height: clamp(300px, 80vh, 400px);
         }
 
         a {
@@ -186,10 +172,15 @@
             margin-top: 12px;
             font-size: clamp(0.85em, 2vw, 0.95em);
             text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #loginError.show, #verificationMessage.show {
+            opacity: 1;
         }
 
         #loadingOverlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -199,10 +190,18 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #loadingOverlay.show {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .loader {
-            width: clamp(60px, 10vw, 80px); /* Responsive size */
+            width: clamp(60px, 10vw, 80px);
             height: clamp(60px, 10vw, 80px);
             border: clamp(8px, 1.5vw, 10px) solid var(--primary);
             border-top: clamp(8px, 1.5vw, 10px) solid var(--secondary);
@@ -219,7 +218,7 @@
             position: fixed;
             top: 15px;
             right: 15px;
-            padding: clamp(8px, 1.5vw, 12px) clamp(16px, 2.5vw, 24px); /* Responsive padding */
+            padding: clamp(8px, 1.5vw, 12px) clamp(16px, 2.5vw, 24px);
             border-radius: 25px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: #ffffff;
@@ -236,7 +235,6 @@
             transform: scale(1.1);
         }
 
-        /* Media Queries for Smaller Devices */
         @media (max-width: 600px) {
             .login-container {
                 padding: 30px;
@@ -257,6 +255,31 @@
             }
         }
     </style>
+    <script>
+        // Prevent right-click
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Prevent developer shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u')
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        // Detect dev tools
+        (function() {
+            function detectDevTools() {
+                if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+                    document.body.innerHTML = '<h1 style="color: #fff; text-align: center;">Please close developer tools to continue.</h1>';
+                }
+            }
+            setInterval(detectDevTools, 2000);
+        })();
+    </script>
 </head>
 <body>
     <button id="themeToggle" onclick="toggleTheme()">Change Theme</button>
@@ -289,8 +312,8 @@
         </div>
         
         <a href="create-account.html">Create Account</a>
-        <p id="loginError" style="color: red;"></p>
-        <p id="verificationMessage" style="color: red;"></p>
+        <p id="loginError"></p>
+        <p id="verificationMessage"></p>
     </div>
 
     <div id="loadingOverlay">
@@ -320,37 +343,39 @@
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
             'size': 'invisible',
             'callback': (response) => { sendPhoneVerification(); },
-            'expired-callback': () => { document.getElementById('loginError').textContent = "reCAPTCHA expired. Please try again."; }
+            'expired-callback': () => { showError("reCAPTCHA expired. Please try again."); }
         });
 
         let isDarkTheme = true;
 
         window.toggleTheme = function() {
-            if (isDarkTheme) {
-                document.documentElement.style.setProperty('--primary', '#ff6f61'); /* Coral */
-                document.documentElement.style.setProperty('--secondary', '#40c4ff'); /* Light blue */
-                document.documentElement.style.setProperty('--dark', '#fafafa'); /* Off-white */
-                document.documentElement.style.setProperty('--glass', 'rgba(0, 0, 0, 0.1)');
-                document.documentElement.style.setProperty('--bg-start', '#e0e0e0');
-                document.documentElement.style.setProperty('--bg-end', '#b0bec5');
-                document.body.style.color = '#1e1e2f';
-            } else {
-                document.documentElement.style.setProperty('--primary', '#00d1b2');
-                document.documentElement.style.setProperty('--secondary', '#ff4081');
-                document.documentElement.style.setProperty('--dark', '#1e1e2f');
-                document.documentElement.style.setProperty('--glass', 'rgba(255, 255, 255, 0.1)');
-                document.documentElement.style.setProperty('--bg-start', '#1e1e2f');
-                document.documentElement.style.setProperty('--bg-end', '#3b3b57');
-                document.body.style.color = '#e0e0e0';
-            }
-            isDarkTheme = !isDarkTheme;
+            requestAnimationFrame(() => {
+                if (isDarkTheme) {
+                    document.documentElement.style.setProperty('--primary', '#ff6f61');
+                    document.documentElement.style.setProperty('--secondary', '#40c4ff');
+                    document.documentElement.style.setProperty('--dark', '#fafafa');
+                    document.documentElement.style.setProperty('--glass', 'rgba(0, 0, 0, 0.1)');
+                    document.documentElement.style.setProperty('--bg-start', '#e0e0e0');
+                    document.documentElement.style.setProperty('--bg-end', '#b0bec5');
+                    document.body.style.color = '#1e1e2f';
+                } else {
+                    document.documentElement.style.setProperty('--primary', '#00d1b2');
+                    document.documentElement.style.setProperty('--secondary', '#ff4081');
+                    document.documentElement.style.setProperty('--dark', '#1e1e2f');
+                    document.documentElement.style.setProperty('--glass', 'rgba(255, 255, 255, 0.1)');
+                    document.documentElement.style.setProperty('--bg-start', '#1e1e2f');
+                    document.documentElement.style.setProperty('--bg-end', '#3b3b57');
+                    document.body.style.color = '#e0e0e0';
+                }
+                isDarkTheme = !isDarkTheme;
+            });
         };
 
         window.login = function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             if (!email || !password) {
-                document.getElementById('loginError').textContent = "Email and password are required!";
+                showError("Email and password are required!");
                 return;
             }
             showLoading();
@@ -383,20 +408,24 @@
         window.toggleMoreOptions = function() {
             const moreOptions = document.getElementById('moreOptions');
             const toggleBtn = document.getElementById('toggleOptionsBtn');
-            moreOptions.classList.toggle('show');
-            toggleBtn.textContent = moreOptions.classList.contains('show') ? 'Less Options' : 'More Options';
+            requestAnimationFrame(() => {
+                moreOptions.classList.toggle('show');
+                toggleBtn.textContent = moreOptions.classList.contains('show') ? 'Less Options' : 'More Options';
+            });
         };
 
         window.showPhoneInput = function() {
-            document.getElementById('phoneNumber').style.display = 'block';
-            document.getElementById('sendCodeBtn').style.display = 'block';
-            document.getElementById('sign-in-button').style.display = 'none';
+            requestAnimationFrame(() => {
+                document.getElementById('phoneNumber').style.display = 'block';
+                document.getElementById('sendCodeBtn').style.display = 'block';
+                document.getElementById('sign-in-button').style.display = 'none';
+            });
         };
 
         window.sendPhoneVerification = function() {
             const phoneNumber = document.getElementById('phoneNumber').value;
             if (!phoneNumber || !phoneNumber.match(/^\+[1-9]\d{1,14}$/)) {
-                document.getElementById('loginError').textContent = "Please enter a valid phone number (e.g., +12345678901)";
+                showError("Please enter a valid phone number (e.g., +12345678901)");
                 return;
             }
             showLoading();
@@ -404,11 +433,12 @@
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
                     hideLoading();
-                    document.getElementById('verificationCode').style.display = 'block';
-                    document.getElementById('verifyCodeBtn').style.display = 'block';
-                    document.getElementById('sendCodeBtn').style.display = 'none';
-                    document.getElementById('verificationMessage').style.color = '#00d1b2';
-                    document.getElementById('verificationMessage').textContent = "Verification code sent to your phone.";
+                    requestAnimationFrame(() => {
+                        document.getElementById('verificationCode').style.display = 'block';
+                        document.getElementById('verifyCodeBtn').style.display = 'block';
+                        document.getElementById('sendCodeBtn').style.display = 'none';
+                        showMessage("Verification code sent to your phone.", '#00d1b2');
+                    });
                 })
                 .catch((error) => handleSignInError(error));
         };
@@ -416,7 +446,7 @@
         window.verifyPhoneCode = function() {
             const code = document.getElementById('verificationCode').value;
             if (!code) {
-                document.getElementById('loginError').textContent = "Please enter the verification code!";
+                showError("Please enter the verification code!");
                 return;
             }
             showLoading();
@@ -429,10 +459,13 @@
             console.log("Sign-In successful:", user.email || user.phoneNumber);
             if (user.email && !user.emailVerified) {
                 hideLoading();
-                document.getElementById('loginError').textContent = "Please verify your email address.";
-                document.getElementById('verificationMessage').innerHTML = `
-                    Email not verified. <a href="#" onclick="sendVerificationEmail('${user.email}')" style="color: #00d1b2;">Send verification email</a> again?
-                `;
+                showError("Please verify your email address.");
+                requestAnimationFrame(() => {
+                    document.getElementById('verificationMessage').innerHTML = `
+                        Email not verified. <a href="#" onclick="sendVerificationEmail('${user.email}')" style="color: #00d1b2;">Send verification email</a> again?
+                    `;
+                    document.getElementById('verificationMessage').classList.add('show');
+                });
                 return;
             }
             setTimeout(() => {
@@ -446,23 +479,49 @@
             sendEmailVerification(auth.currentUser)
                 .then(() => {
                     hideLoading();
-                    document.getElementById('verificationMessage').style.color = '#00d1b2';
-                    document.getElementById('verificationMessage').textContent = `Verification email sent to ${email}.`;
+                    showMessage(`Verification email sent to ${email}.`, '#00d1b2');
                 })
                 .catch((error) => handleSignInError(error));
         };
 
         function handleSignInError(error) {
             hideLoading();
-            document.getElementById('loginError').textContent = error.message;
+            showError(error.message);
             console.error("Sign-In error:", error.message);
             if (error.code === 'auth/popup-closed-by-user') {
-                document.getElementById('loginError').textContent = "Sign-in cancelled. Please try again.";
+                showError("Sign-in cancelled. Please try again.");
             }
         }
 
-        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
-        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+        function showLoading() {
+            requestAnimationFrame(() => {
+                document.getElementById('loadingOverlay').classList.add('show');
+            });
+        }
+
+        function hideLoading() {
+            requestAnimationFrame(() => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+            });
+        }
+
+        function showError(message) {
+            requestAnimationFrame(() => {
+                const errorEl = document.getElementById('loginError');
+                errorEl.textContent = message;
+                errorEl.style.color = 'red';
+                errorEl.classList.add('show');
+            });
+        }
+
+        function showMessage(message, color) {
+            requestAnimationFrame(() => {
+                const msgEl = document.getElementById('verificationMessage');
+                msgEl.textContent = message;
+                msgEl.style.color = color;
+                msgEl.classList.add('show');
+            });
+        }
     </script>
 </body>
 </html>
